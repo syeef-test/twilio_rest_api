@@ -29,7 +29,7 @@ exports.sms = async (req, res, next) => {
     if (!valid && valid_error.length > 0) {
       return res.status(400).json({ message: "Invalid Phone Number" });
     } else {
-      //send message
+      //Send message
       const response = await client.messages.create({
         body: "This is the ship that made the Kessel Run in fourteen parsecs?",
         from: process.env.TWILIO_PHONE_NUMBER,
@@ -40,8 +40,6 @@ exports.sms = async (req, res, next) => {
         return res.status(200).json({ message: "SMS sent successfully" });
       }
     }
-
-    //res.status(200).json({ message: valid_phone_number_details });
   } catch (error) {
     res.status(500).json({ error: "An error occured on server" });
     console.log(error);
@@ -70,7 +68,7 @@ exports.call = async (req, res, next) => {
     if (!valid && valid_error.length > 0) {
       return res.status(400).json({ message: "Invalid Phone Number" });
     } else {
-      //send call
+      //Send call
       const response = await client.calls.create({
         url: "http://demo.twilio.com/docs/voice.xml",
         from: process.env.TWILIO_PHONE_NUMBER,
@@ -110,7 +108,7 @@ exports.whatsapp = async (req, res, next) => {
     if (!valid && valid_error.length > 0) {
       return res.status(400).json({ message: "Invalid Phone Number" });
     } else {
-      //send whatsappmessage
+      //Send whatsapp_message
       const response = await client.messages.create({
         body: "Your appointment is coming up on July 21 at 3PM",
         from: `whatsapp:${process.env.TWILIO_WHATSAPP_PHONE_NUMBER}`,
