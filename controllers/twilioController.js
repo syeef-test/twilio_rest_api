@@ -30,9 +30,18 @@ exports.sms = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid Phone Number" });
     } else {
       //send message
+      const response = await client.messages.create({
+        body: "This is the ship that made the Kessel Run in fourteen parsecs?",
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: `${reciepient_phone_no}`,
+      });
+      if (response.sid) {
+        console.log(response.sid);
+        return res.status(200).json({ message: "SMS sent successfully" });
+      }
     }
 
-    res.status(200).json({ message: valid_phone_number_details });
+    //res.status(200).json({ message: valid_phone_number_details });
   } catch (error) {
     res.status(500).json({ error: "An error occured on server" });
     console.log(error);
@@ -57,10 +66,6 @@ exports.whatsapp = async (req, res, next) => {
 
 async function checkPhoneNumber(phone_number) {
   try {
-    // const response = await client.lookups.V2.phoneNumbers(
-    //   `${phone_number}`
-    // ).fetch();
-
     const response = await client.lookups.v2
       .phoneNumbers(`${phone_number}`)
       .fetch();
