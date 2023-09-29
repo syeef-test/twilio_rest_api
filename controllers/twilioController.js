@@ -50,9 +50,40 @@ exports.sms = async (req, res, next) => {
 
 exports.call = async (req, res, next) => {
   try {
-    console.log(req.body);
+    const reciepient_phone_no = req.body.to;
+    //First check number is string and not null
+    if (
+      typeof reciepient_phone_no !== "string" ||
+      reciepient_phone_no.trim() === ""
+    ) {
+      return res.status(400).json({ message: "Invalid Phone Number" });
+    }
+
+    //Check phone number is valid or not
+    const valid_phone_number_details = await checkPhoneNumber(
+      reciepient_phone_no
+    );
+
+    const valid = valid_phone_number_details.valid;
+    const valid_error = valid_phone_number_details.errors;
+
+    if (!valid && valid_error.length > 0) {
+      return res.status(400).json({ message: "Invalid Phone Number" });
+    } else {
+      //send call
+      const response = await client.calls.create({
+        url: "http://demo.twilio.com/docs/voice.xml",
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: `${reciepient_phone_no}`,
+      });
+      if (response.sid) {
+        console.log(response.sid);
+        return res.status(200).json({ message: "Call sent successfully" });
+      }
+    }
   } catch (error) {
     console.log(error);
+    res.status(500).json({ error: "An error occured on server" });
   }
 };
 
